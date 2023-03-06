@@ -11,7 +11,7 @@ export function initP5(){
 
 
 
-function submitCar (e) {
+async function submitCar (e) {
   e.preventDefault();
   const formData = new FormData(formAddCar);
   const carDataFromForm = Object.fromEntries(formData)
@@ -23,10 +23,18 @@ function submitCar (e) {
       'Content-Type': 'application/json'
     }
   }
-  fetch("http://localhost:8080/api/cars", options)
-   .then(res=>res.json())
-   .then(result =>  document.getElementById("new-car-status").innerText =
-    "New car added with ID: " + result.id + `(${JSON.stringify(result)})`)
+  const addedCar = await fetch("http://localhost:8080/api/cars", options)
+   .then(res=>{
+    if(!res.ok){
+      throw new Error("Could not add car")
+    }
+    return res.json()
+    })
+
+    document.getElementById("new-car-status").innerText = "New car added"
+    JSON.stringify(addedCar)
+   //.then(result =>  document.getElementById("new-car-status").innerText =
+    //"New car added with ID: " + result.id + `(${JSON.stringify(result)})`)
 }
 
 function newCar(evt ){
